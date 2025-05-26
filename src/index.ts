@@ -15,7 +15,7 @@ const ssm = new SSMClient({
 export const healthHandler = async (): Promise<APIGatewayProxyResult> => {
   return {
     statusCode: 200,
-    body: JSON.stringify({ status: 'ok' })
+    body: JSON.stringify({ status: 'ok <- memo2 demo' })
   };
 };
 
@@ -23,7 +23,6 @@ export const echoHandler = async (event: APIGatewayProxyEvent): Promise<APIGatew
   try {
     const body = event.body ? JSON.parse(event.body) : {};
 
-    // Only try to access SSM if we're not in offline mode
     let apiKeyExists = false;
     if (process.env.IS_OFFLINE !== 'true' && process.env.NODE_ENV !== 'test') {
       try {
@@ -42,7 +41,7 @@ export const echoHandler = async (event: APIGatewayProxyEvent): Promise<APIGatew
     return {
       statusCode: 200,
       body: JSON.stringify({
-        message: 'Echo service responding',
+        message: 'Echo service responding (memo2 demo)',
         youSent: body,
         apiKeyExists
       })

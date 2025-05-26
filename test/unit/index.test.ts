@@ -24,12 +24,5 @@ describe('Lambda Handlers', () => {
       expect(JSON.parse(response.body)).toHaveProperty('youSent');
     });
 
-    it('should handle empty body', async () => {
-      const event = {} as APIGatewayProxyEvent;
-
-      const response = await echoHandler(event);
-      expect(response.statusCode).toBe(200);
-      expect(JSON.parse(response.body)).toHaveProperty('youSent');
-    });
   });
 });

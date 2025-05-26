@@ -1,0 +1,76 @@
+service: cloud-native-lambda-service
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-east-1'}
+  
+  # IAM role statements
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - ssm:GetParameter
+          Resource: "arn:aws:ssm:${self:provider.region}:*:parameter/myapp/*"
+        - Effect: Allow
+          Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+          Resource: "arn:aws:logs:${self:provider.region}:*:log-group:/aws/lambda/*"
+
+functions:
+  health:
+    handler: dist/index.healthHandler
+    events:
+      - http:
+          path: /health
+          method: get
+    environment:
+      NODE_ENV: ${opt:stage, 'dev'}
+  
+  echo:
+    handler: dist/index.echoHandler
+    events:
+      - http:
+          path: /echo
+          method: post
+    environment:
+      NODE_ENV: ${opt:stage, 'dev'}
+
+resources:
+  Resources:
+    # SSM Parameter for API Key
+    ApiKeyParameter:
+      Type: AWS::SSM::Parameter
+      Properties:
+        Name: /myapp/api-key
+        Type: SecureString
+        Value: ${env:API_KEY, 'dummy-key-for-local'}
+        Description: API Key for the service
+
+    # CloudWatch Alarm for API Errors
+    ApiErrorsAlarm:
+      Type: AWS::CloudWatch::Alarm
+      Properties:
+        AlarmName: ${self:service}-${self:provider.stage}-api-errors
+        AlarmDescription: Alert on API 5XX errors
+        MetricName: 5XXError
+        Namespace: AWS/ApiGateway
+        Statistic: Sum
+        Period: 300
+        EvaluationPeriods: 1
+        Threshold: 1
+        ComparisonOperator: GreaterThanThreshold
+        TreatMissingData: notBreaching
+
+plugins:
+  - serverless-offline
+  - serverless-plugin-typescript
+
+custom:
+  serverless-offline:
+    httpPort: 5000
+    lambdaPort: 5002 

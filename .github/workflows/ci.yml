@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  validate:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -15,16 +15,27 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '20'
+          cache: 'npm'
 
       - name: Install Dependencies
-        run: npm install
+        run: npm ci
 
-      - name: Run Linter
-        run: npm run lint
+      - name: Lint & Test
+        run: |
+          npm run lint
+          npm run test
 
-      - name: Run Tests
-        run: npm run test:unit
+      - name: Build
+        run: npm run build
+
+      - name: Deploy to Dev
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: npm run deploy
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          API_KEY: ${{ secrets.API_KEY }}
 
       # AWS Deployment steps commented out
       # - name: Setup Terraform
