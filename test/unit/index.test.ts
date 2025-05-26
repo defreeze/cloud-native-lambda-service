@@ -1,6 +1,9 @@
 import { APIGatewayProxyEvent } from 'aws-lambda';
 import { healthHandler, echoHandler } from '../../src/index';
 
+// Set test environment
+process.env.NODE_ENV = 'test';
+
 describe('Lambda Handlers', () => {
   describe('healthHandler', () => {
     it('should return status ok', async () => {
