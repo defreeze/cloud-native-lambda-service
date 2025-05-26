@@ -15,7 +15,7 @@ const ssm = new SSMClient({
 export const healthHandler = async (): Promise<APIGatewayProxyResult> => {
   return {
     statusCode: 200,
-    body: JSON.stringify({ status: 'ok <- memo2 demo' })
+    body: JSON.stringify({ status: 'ok' })
   };
 };
 

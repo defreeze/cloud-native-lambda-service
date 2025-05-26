@@ -23,6 +23,5 @@ describe('Lambda Handlers', () => {
       expect(response.statusCode).toBe(200);
       expect(JSON.parse(response.body)).toHaveProperty('youSent');
     });
-
   });
 });
