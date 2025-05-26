@@ -12,9 +12,17 @@ provider "aws" {
   region = var.aws_region
 }
 
+# Archive for Lambda functions
+data "archive_file" "lambda_zip" {
+  type        = "zip"
+  source_dir  = "${path.module}/../dist"
+  output_path = "${path.module}/lambda.zip"
+}
+
 # Lambda functions
 resource "aws_lambda_function" "health" {
-  filename         = "../dist/index.js"
+  filename         = data.archive_file.lambda_zip.output_path
+  source_code_hash = data.archive_file.lambda_zip.output_base64sha256
   function_name    = "${var.project_name}-health"
   role            = aws_iam_role.lambda_role.arn
   handler         = "index.healthHandler"
@@ -28,7 +36,8 @@ resource "aws_lambda_function" "health" {
 }
 
 resource "aws_lambda_function" "echo" {
-  filename         = "../dist/index.js"
+  filename         = data.archive_file.lambda_zip.output_path
+  source_code_hash = data.archive_file.lambda_zip.output_base64sha256
   function_name    = "${var.project_name}-echo"
   role            = aws_iam_role.lambda_role.arn
   handler         = "index.echoHandler"

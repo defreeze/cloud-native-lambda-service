@@ -25,3 +25,10 @@ Thumbs.db
 
 # Installer files
 *.msi
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+terraform/.terraform/
+terraform/lambda.zip
