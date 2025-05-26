@@ -25,20 +25,20 @@ jobs:
         run: npm run lint
 
       - name: Run Tests
-        run: npm run test
+        run: npm run test:unit
 
       - name: Build TypeScript
         run: npm run build
 
       - name: Install Serverless Framework
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: npm install -g serverless
-
-      - name: Validate Serverless Config
-        run: serverless package --stage dev --noDeploy
 
       - name: Deploy to AWS
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: serverless deploy --stage prod
+        run: |
+          serverless package --stage prod
+          serverless deploy --stage prod
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
