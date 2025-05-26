@@ -21,12 +21,13 @@ data "archive_file" "lambda_zip" {
 
 # Lambda functions
 resource "aws_lambda_function" "health" {
-  filename         = data.archive_file.lambda_zip.output_path
+  filename      = data.archive_file.lambda_zip.output_path
+  function_name = "${var.project_name}-health"
+  role         = aws_iam_role.lambda_role.arn
+  handler      = "index.healthHandler"
+  runtime      = "nodejs20.x"
+
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
-  function_name    = "${var.project_name}-health"
-  role            = aws_iam_role.lambda_role.arn
-  handler         = "index.healthHandler"
-  runtime         = "nodejs20.x"
 
   environment {
     variables = {
@@ -36,12 +37,13 @@ resource "aws_lambda_function" "health" {
 }
 
 resource "aws_lambda_function" "echo" {
-  filename         = data.archive_file.lambda_zip.output_path
+  filename      = data.archive_file.lambda_zip.output_path
+  function_name = "${var.project_name}-echo"
+  role         = aws_iam_role.lambda_role.arn
+  handler      = "index.echoHandler"
+  runtime      = "nodejs20.x"
+
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
-  function_name    = "${var.project_name}-echo"
-  role            = aws_iam_role.lambda_role.arn
-  handler         = "index.echoHandler"
-  runtime         = "nodejs20.x"
 
   environment {
     variables = {
@@ -57,8 +59,8 @@ resource "aws_apigatewayv2_api" "main" {
 }
 
 resource "aws_apigatewayv2_stage" "main" {
-  api_id = aws_apigatewayv2_api.main.id
-  name   = var.environment
+  api_id      = aws_apigatewayv2_api.main.id
+  name        = var.environment
   auto_deploy = true
 }
 
