@@ -21,21 +21,29 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      - name: Lint & Test
-        run: |
-          npm run lint
-          npm run test
+      - name: Run Linter
+        run: npm run lint
 
-      - name: Build
+      - name: Run Tests
+        run: npm run test
+
+      - name: Build TypeScript
         run: npm run build
 
-      - name: Deploy to Dev
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: npm run deploy
+      - name: Install Serverless Framework
+        run: npm install -g serverless
+
+      - name: Validate Serverless Config
+        run: serverless package --stage dev --noDeploy
+
+      # Deploy only on push to main
+      - name: Deploy to AWS
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: serverless deploy --stage prod
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          API_KEY: ${{ secrets.API_KEY }}
+          AWS_REGION: 'us-east-1'
 
       # AWS Deployment steps commented out
       # - name: Setup Terraform
@@ -72,4 +80,4 @@ jobs:
       #   env:
       #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #     TF_VAR_api_key: ${{ secrets.API_KEY }}
+      #     TF_VAR_api_key: ${{ sec
