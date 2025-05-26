@@ -36,7 +36,6 @@ jobs:
       - name: Validate Serverless Config
         run: serverless package --stage dev --noDeploy
 
-      # Deploy only on push to main
       - name: Deploy to AWS
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: serverless deploy --stage prod
