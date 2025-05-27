@@ -4,15 +4,18 @@ memo2 test assignment
 Alex de Vries
 
 The assessment consists of two main steps, first the two REST endpoints using Terraform for provisioning. The second step is setting up a CI/CD pipeline for Github Actions.
+The assessment consists of two main steps, first I built the two REST endpoints using Terraform for provisioning. The second step is setting up a CI/CD pipeline for Github Actions.
 
 My approach is similar to the order of the CI/CD steps. First I install node.js,  terraform and all other dependencies.
+My approach is similar to the order of the CI/CD steps. First I install node.js, terraform and all other dependencies.
 
 Then I worked on index.ts for defining the two endpoints. I used this AWS documentation as reference: https://docs.aws.amazon.com/lambda/latest/dg/lambda-nodejs.html
 
 Then i started working on terraform for the files main.tf for the infra code, iam.tf for the IAM roles, ssm.tf for parameter store and variables.tf which is not too relevant here but useful for production. The cloudwatch alarm goes of if there is more than 1 error within a 300 second time window. This was my main source: https://registry.terraform.io/providers/hashicorp/aws/latest/docs.
 
 Lastly i Worked on the ci/cd pipeline in ci.yml. For this I commented out the terraform apply as there is no real AWS connection and the keys are just for the test.
-
+Lastly i worked on the ci/cd pipeline in ci.yml. For this I commented out the terraform apply as there is no real AWS connection and the keys are just for the test.
+ 
 Things to improve for production:
 - api gateway authentication
 - rate limits on api endpoints
