@@ -1,6 +1,6 @@
 # Cloud-Native Lambda Service
 
-memo2 test assignment
+test assignment
 Alex de Vries
 
 The assessment consists of two main steps, first I built the two REST endpoints using Terraform for provisioning. The second step is setting up a CI/CD pipeline for Github Actions. 
